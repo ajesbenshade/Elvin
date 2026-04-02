@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ItemData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = "happy_acorn"
+display_name = "HappyAcorn"
+scene_path = "res://scenes/items/HappyAcorn.tscn"
+tint = Color(0.78,0.56,0.35,1)
+stack_size = 99

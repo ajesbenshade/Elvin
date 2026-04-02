@@ -4,9 +4,9 @@
 
 [resource]
 script = ExtResource("1")
-block_id = "grass_block"
-display_name = "GrassBlock"
-scene_path = "res://scenes/blocks/GrassBlock.tscn"
-material_color = Color(0.27,0.89,0.32,1)
+block_id = "star_block"
+display_name = "StarBlock"
+scene_path = "res://scenes/blocks/StarBlock.tscn"
+material_color = Color(1,0.92,0.36,1)
 preview_tint = Color(0.35, 0.78, 1, 0.45)
 stack_size = 999

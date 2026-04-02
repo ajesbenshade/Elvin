@@ -1,15 +1,21 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/CreativeUI.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/blocks/GrassBlock.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/blocks/RainbowBlock.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/blocks/SunshineBlock.tscn" id="4"]
 
 [node name="CreativeUI" type="CanvasLayer"]
 script = ExtResource("1")
+block_presets = [ExtResource("2"), ExtResource("3"), ExtResource("4")]
 
 [node name="Panel" type="Panel" parent="."]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 380.0
-offset_bottom = 180.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 210.0
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 anchors_preset = 15
@@ -19,9 +25,18 @@ offset_left = 10.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+text = "Creative Blocks"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 34
 
 [node name="BlockButtons" type="HBoxContainer" parent="Panel/VBox"]
+size_flags_vertical = 3
+theme_override_constants/separation = 12
 
 [node name="SaveButton" type="Button" parent="Panel/VBox"]
 text = "Save World"
-custom_minimum_size = Vector2(160, 56)
+custom_minimum_size = Vector2(220, 70)
+theme_override_font_sizes/font_size = 28

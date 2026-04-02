@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/InventoryUI.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Hotbar.tscn" id="2"]
+
+[node name="InventoryUI" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="RootPanel" type="Panel" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 410.0
+offset_bottom = 240.0
+
+[node name="VBox" type="VBoxContainer" parent="RootPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="RootPanel/VBox"]
+text = "Elvin Joy Sandbox"
+theme_override_font_sizes/font_size = 28
+
+[node name="ModeLabel" type="Label" parent="RootPanel/VBox"]
+text = "Mode: Fly (F to walk)"
+
+[node name="CollectibleLabel" type="Label" parent="RootPanel/VBox"]
+text = "Collectibles: none yet"
+
+[node name="ButtonRow" type="HBoxContainer" parent="RootPanel/VBox"]
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="RootPanel/VBox/ButtonRow"]
+text = "Save Blocks"
+custom_minimum_size = Vector2(140, 44)
+
+[node name="LoadButton" type="Button" parent="RootPanel/VBox/ButtonRow"]
+text = "Load Blocks"
+custom_minimum_size = Vector2(140, 44)
+
+[node name="Hotbar" parent="." instance=ExtResource("2")]

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="ParticleProcessMaterial" id="1"]
+emission_shape = 1
+emission_sphere_radius = 0.2
+direction = Vector3(0, 1, 0)
+spread = 180.0
+gravity = Vector3(0, -3, 0)
+initial_velocity_min = 1.8
+initial_velocity_max = 3.2
+scale_min = 0.1
+scale_max = 0.22
+color = Color(0.42, 0.92, 1, 1)
+
+[sub_resource type="SphereMesh" id="2"]
+radius = 0.08
+height = 0.16
+
+[node name="PlaceBurst" type="Node3D"]
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+emitting = true
+amount = 26
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+draw_pass_1 = SubResource("2")
+process_material = SubResource("1")

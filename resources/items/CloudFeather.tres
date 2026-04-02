@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ItemData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = "cloud_feather"
+display_name = "CloudFeather"
+scene_path = "res://scenes/items/CloudFeather.tscn"
+tint = Color(0.9,0.97,1,1)
+stack_size = 99

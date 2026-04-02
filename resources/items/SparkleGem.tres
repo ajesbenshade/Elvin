@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ItemData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = "sparkle_gem"
+display_name = "SparkleGem"
+scene_path = "res://scenes/items/SparkleGem.tscn"
+tint = Color(1,0.85,0.35,1)
+stack_size = 99

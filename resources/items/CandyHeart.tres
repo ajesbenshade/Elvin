@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ItemData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = "candy_heart"
+display_name = "CandyHeart"
+scene_path = "res://scenes/items/CandyHeart.tscn"
+tint = Color(1,0.55,0.68,1)
+stack_size = 99
