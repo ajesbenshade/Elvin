@@ -11,6 +11,7 @@
 [ext_resource type="Resource" path="res://resources/blocks/GrassBlock.tres" id="9"]
 [ext_resource type="Resource" path="res://resources/blocks/RainbowBlock.tres" id="10"]
 [ext_resource type="Resource" path="res://resources/blocks/CandyBlock.tres" id="11"]
+[ext_resource type="Script" path="res://scripts/builder.gd" id="12"]
 
 [sub_resource type="BoxMesh" id="1"]
 size = Vector3(14, 1, 14)
@@ -56,6 +57,11 @@ starter_block_scene = ExtResource("4")
 place_particle_scene = ExtResource("5")
 remove_particle_scene = ExtResource("6")
 preview_color = Color(0.35, 0.78, 1, 0.4)
+
+[node name="Builder" type="Node3D" parent="."]
+script = ExtResource("12")
+selected_block = ExtResource("9")
+block_scene = ExtResource("4")
 
 [node name="HotbarUI" parent="." instance=ExtResource("3")]
 builder_path = NodePath("../CreativeBuilder")
