@@ -1,0 +1,6 @@
+[gd_resource type="BlockData" load_steps=3 format=2]
+display_name = "Grass Block"
+color = Color(0.2, 0.8, 0.2)
+box_scale = Vector3(1.0, 1.0, 1.0)
+place_sfx = ExtResource("res://assets/sounds/place_burst.wav")
+break_sfx = ExtResource("res://assets/sounds/remove_pop.wav")

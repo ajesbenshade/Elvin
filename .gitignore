@@ -1,0 +1,11 @@
+# Godot 4 generated data
+.godot/
+.import/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
+*.tmp
