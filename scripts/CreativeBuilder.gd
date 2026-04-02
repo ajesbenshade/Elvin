@@ -4,6 +4,7 @@ extends Node3D
 @export var camera_path: NodePath
 @export var block_container_path: NodePath
 @export var starter_block_scene: PackedScene
+@export var starter_block_data: BlockData
 
 # Optional sound and particle resources.
 @export var place_sound: AudioStream
@@ -11,6 +12,10 @@ extends Node3D
 @export var boop_sound: AudioStream
 @export var place_particle_scene: PackedScene
 @export var remove_particle_scene: PackedScene
+
+# Runtime selection state.
+var selected_block_data: BlockData
+var selected_block_scene: PackedScene
 
 # Tweakable building behavior.
 @export var max_build_distance: float = 50.0
@@ -24,27 +29,77 @@ extends Node3D
 @onready var block_container: Node3D = get_node(block_container_path)
 
 var preview: MeshInstance3D
-var selected_block_scene: PackedScene
 
 func _ready() -> void:
     # Start with a default block, then let hotbar selections override it.
-    selected_block_scene = starter_block_scene
+    if starter_block_data and starter_block_data.block_scene:
+        set_selected_block_data(starter_block_data)
+    else:
+        selected_block_scene = starter_block_scene
+        selected_block_data = null
     create_preview()
 
 func create_preview() -> void:
-    # The preview ghost is a transparent cube to show exactly where block will go.
     preview = MeshInstance3D.new()
     var ghost_box := BoxMesh.new()
     ghost_box.size = preview_scale
     preview.mesh = ghost_box
     var mat := StandardMaterial3D.new()
-    mat.albedo_color = preview_color
+    mat.albedo_color = get_active_preview_tint()
     mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
     mat.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
     mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     preview.material_override = mat
     preview.visible = false
     add_child(preview)
+
+func _block_scene_for_data(data: BlockData) -> PackedScene:
+    if data == null:
+        return null
+
+    if data.block_scene:
+        return data.block_scene
+
+    if data.scene_path and data.scene_path != "":
+        var loaded := load(data.scene_path)
+        if loaded and loaded is PackedScene:
+            data.block_scene = loaded
+            return loaded
+
+    return null
+
+func get_active_block_scene() -> PackedScene:
+    if selected_block_data:
+        var data_scene := _block_scene_for_data(selected_block_data)
+        if data_scene:
+            return data_scene
+
+    if selected_block_scene:
+        return selected_block_scene
+
+    return starter_block_scene
+
+func get_active_preview_tint() -> Color:
+    if selected_block_data:
+        return selected_block_data.preview_tint
+    var mat := preview.material_override as StandardMaterial3D
+    return mat.albedo_color if mat else preview_color
+
+func set_selected_block_data(data: BlockData) -> void:
+    selected_block_data = data
+    selected_block_scene = _block_scene_for_data(data)
+    var tint := data.preview_tint
+    var mat := preview.material_override as StandardMaterial3D
+    if mat:
+        mat.albedo_color = tint
+
+func set_selected_block(scene: PackedScene, new_preview_tint: Color) -> void:
+    # Called by hotbar when player clicks a slot.
+    selected_block_scene = scene
+    selected_block_data = null
+    var mat := preview.material_override as StandardMaterial3D
+    if mat:
+        mat.albedo_color = new_preview_tint
 
 func _process(_delta: float) -> void:
     # Update preview every frame.
@@ -72,22 +127,43 @@ func raycast() -> Dictionary:
     return space_state.intersect_ray(query)
 
 func place_block(hit: Dictionary) -> void:
-    if selected_block_scene == null:
+    var block_scene := get_active_block_scene()
+    if block_scene == null:
         return
 
     var target_pos := _snapped_place_position(hit)
     if has_block_at(target_pos):
         return
 
-    var block := selected_block_scene.instantiate() as Node3D
+    var block := block_scene.instantiate() as Node3D
     block.global_position = target_pos
     block_container.add_child(block)
 
     if block.has_method("bounce_into_place"):
         block.bounce_into_place()
 
-    play_event(place_sound, target_pos, place_particle_scene)
-    play_soothing_boop()
+    var sound_stream: AudioStream = place_sound
+    if selected_block_data and selected_block_data.place_sfx:
+        sound_stream = selected_block_data.place_sfx
+
+    var particle_packed: PackedScene = place_particle_scene
+    if selected_block_data and selected_block_data.place_particle_scene:
+        particle_packed = selected_block_data.place_particle_scene
+
+    play_event(sound_stream, target_pos, particle_packed)
+
+    var boop_stream: AudioStream = boop_sound
+    if selected_block_data and selected_block_data.place_sfx:
+        boop_stream = selected_block_data.place_sfx
+    if boop_stream == null:
+        play_soothing_boop()
+    else:
+        var boop := AudioStreamPlayer3D.new()
+        boop.stream = boop_stream
+        boop.global_position = camera.global_position
+        add_child(boop)
+        boop.play()
+        boop.finished.connect(Callable(boop, "queue_free"))
 
 func remove_block(hit: Dictionary) -> void:
     var target_pos := _snapped_remove_position(hit)
@@ -96,7 +172,16 @@ func remove_block(hit: Dictionary) -> void:
         var tween := block.create_tween()
         tween.tween_property(block, "scale", remove_pop_scale, remove_pop_time)
         block.queue_free()
-        play_event(remove_sound, target_pos, remove_particle_scene)
+
+        var sound_stream: AudioStream = remove_sound
+        if selected_block_data and selected_block_data.break_sfx:
+            sound_stream = selected_block_data.break_sfx
+
+        var particle_packed: PackedScene = remove_particle_scene
+        if selected_block_data and selected_block_data.break_particle_scene:
+            particle_packed = selected_block_data.break_particle_scene
+
+        play_event(sound_stream, target_pos, particle_packed)
 
 func has_block_at(pos: Vector3) -> bool:
     return block_at(pos) != null
@@ -144,10 +229,3 @@ func _snapped_remove_position(hit: Dictionary) -> Vector3:
     var hit_position := hit["position"] as Vector3
     var hit_normal := hit["normal"] as Vector3
     return (hit_position - hit_normal * 0.5).snapped(grid_step)
-
-func set_selected_block(scene: PackedScene, new_preview_tint: Color) -> void:
-    # Called by hotbar when player clicks a slot.
-    selected_block_scene = scene
-    var mat := preview.material_override as StandardMaterial3D
-    if mat:
-        mat.albedo_color = new_preview_tint
