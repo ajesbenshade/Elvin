@@ -7,6 +7,7 @@ signal block_selected(scene: PackedScene, preview_tint: Color)
 @export var block_data_list: Array = []
 @export var block_scenes: Array[PackedScene] = []
 @export var slot_names: Array[String] = ["Grass", "Rainbow", "Candy"]
+@export var slot_icons: Array[Texture2D] = []
 @export var preview_tints: Array[Color] = [
     Color(0.35, 0.82, 1.0, 0.45),
     Color(1.0, 0.55, 0.85, 0.45),
@@ -50,6 +51,9 @@ func _build_buttons() -> void:
             label_text += _slot_name(i)
 
         button.text = label_text
+        if i < slot_icons.size() and slot_icons[i] != null:
+            button.icon = slot_icons[i]
+
         button.add_theme_font_size_override("font_size", 24)
         button.add_theme_color_override("font_color", Color(0.15, 0.17, 0.22, 1.0))
         button.add_theme_color_override("font_color_hover", Color(0.1, 0.1, 0.1, 1.0))

@@ -12,6 +12,7 @@
 [ext_resource type="Resource" path="res://resources/blocks/RainbowBlock.tres" id="10"]
 [ext_resource type="Resource" path="res://resources/blocks/CandyBlock.tres" id="11"]
 [ext_resource type="Script" path="res://scripts/builder.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/NetworkLobby.gd" id="13"]
 
 [sub_resource type="BoxMesh" id="1"]
 size = Vector3(14, 1, 14)
@@ -62,6 +63,9 @@ preview_color = Color(0.35, 0.78, 1, 0.4)
 script = ExtResource("12")
 selected_block = ExtResource("9")
 block_scene = ExtResource("4")
+
+[node name="NetworkLobby" type="Node" parent="."]
+script = ExtResource("13")
 
 [node name="HotbarUI" parent="." instance=ExtResource("3")]
 builder_path = NodePath("../CreativeBuilder")
